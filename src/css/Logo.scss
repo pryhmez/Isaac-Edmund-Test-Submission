@@ -1,0 +1,22 @@
+
+.logo-cont{
+
+    // background-color: blue;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    h2 {
+        font-size: 10px;
+        // font-family: 'poppins';
+    }
+
+    img {
+        width: 100%;
+        max-height:auto;
+        overflow: hidden;
+        
+    }
+}
+
