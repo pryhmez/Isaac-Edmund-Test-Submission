@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 
 import Header from "../../components/Header";
 import CartItem from "../../components/CartItem";
+import CartListHolder from "../../components/CartListHolder";
 
 import Thumbnail from "../../components/Thumbnail";
 import item from "../../assets/item1.png";
@@ -93,12 +94,15 @@ class Cart extends Component {
         <Holder>
           <Heading>Cart</Heading>
 
-          <Centralize>
+          {/* <Centralize>
              <Demarkator></Demarkator>
             <CartItem></CartItem>
             <Demarkator></Demarkator>
+            
 
-          </Centralize>
+          </Centralize> */}
+
+          <CartListHolder/>
         </Holder>
       </Container>
     );

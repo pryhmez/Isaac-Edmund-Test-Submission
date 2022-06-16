@@ -12,13 +12,13 @@ import {
   ApolloProvider,
   from,
   HttpLink,
+  defaultDataIdFromObject
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 
 const { store, persistor } = configureStore();
 
 const cache = new InMemoryCache();
-
 // const link = new HttpLink({ uri: "http://localhost:4000/qraphql" });
 
 const client = new ApolloClient({
@@ -34,6 +34,10 @@ const client = new ApolloClient({
   defaultOptions: {
     watchQuery: {
       fetchPolicy: "cache-and-network",
+    },
+    query: {
+      fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
     },
   },
 });

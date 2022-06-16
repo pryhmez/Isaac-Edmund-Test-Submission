@@ -37,6 +37,7 @@ export const LOAD_ALL = function (page) {
             displayValue,
             value,
             id
+            
           }
         }
       }
@@ -59,6 +60,7 @@ export const LOAD_PRODUCT = function (id) {
             symbol
             label
           }
+          
         }
         description,
         brand,
@@ -70,7 +72,11 @@ export const LOAD_PRODUCT = function (id) {
             displayValue,
             value,
             id
+            # Disable Apollo caching for this Color
+            __typename @skip(if: true)
           }
+          # Disable Apollo caching for this Color
+          __typename @skip(if: true)
         }
       }
     }

@@ -45,7 +45,7 @@ const Holder = styled.div`
   // padding: 10px;
 `;
 
-class Women extends Component {
+class Main extends Component {
   constructor(props) {
     super(props);
 
@@ -63,7 +63,7 @@ class Women extends Component {
         <Header >{this.props.setup.page}</Header>
 
         <Holder>
-          <Query query={LOAD_ALL(this.props.setup.page)}>
+          <Query query={LOAD_ALL("all")}>
             {({ loading, error, data }) => {
               if (error) {
                 return <h1>Error...{error+""}</h1>;
@@ -71,6 +71,7 @@ class Women extends Component {
               if (loading) {
                 return <h1>Loading....</h1>;
               }
+              console.log(data)
               return data.category.products.map((item, index) => {
                 return <Thumbnail details={item} key={index} />;
               });
@@ -90,4 +91,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Women);
+export default connect(mapStateToProps)(Main);

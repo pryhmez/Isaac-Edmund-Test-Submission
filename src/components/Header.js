@@ -14,6 +14,7 @@ import jpy from "../assets/jpy.png";
 import eur from "../assets/eur.png";
 import { Cart } from "../components/AllSvgs";
 import Dropdown from "../components/DropDown";
+import CartDropDown from "./CartDropDown";
 import { findAllByTestId } from "@testing-library/react";
 
 const Container = styled.div`
@@ -116,9 +117,10 @@ class Header extends Component {
       scroll: true,
       currency: "usd",
       showDrop: false,
+      showCartDrop: false,
       page: 0,
       data: {},
-      cartSelect: false
+      cartSelect: false,
     };
   }
 
@@ -153,8 +155,15 @@ class Header extends Component {
     this.setState({ click: findAllByTestId });
   };
 
-  setDrop = () => {
-    this.setState({ showDrop: !this.state.showDrop });
+  setDrop = (drop) => {
+    this.setState({ showDrop: !this.state.showDrop, showCartDrop: false });
+  };
+
+  setCartDrop = (drop) => {
+    this.setState({
+      showCartDrop: !this.state.showCartDrop,
+      showDrop: false
+    });
   };
 
   componentDidMount() {}
@@ -247,12 +256,28 @@ class Header extends Component {
               </Query>
             </LinkContainer>
 
-            <LinkContainer style={{ justifyContent: "center" }} onClick={() => {this.setState({cartSelect: true})}} >
-              {this.state.cartSelect && <Navigate to={`/cart`}  />}
+            <LinkContainer
+              style={{ justifyContent: "center" }}
+              onClick={this.setCartDrop}
+            >
+              {/* {this.state.cartSelect && <Navigate to={`/cart`}  />} */}
               <div style={{ width: "0px", height: "0px", zIndex: "10" }}>
                 <Badge>{this.props.cart.length}</Badge>
               </div>
               <Cart />
+              <Query query={LOAD_CURRENCIES}>
+                {({ loading, error, data }) => {
+                  if (error) return <h1>Error...{error + ""}</h1>;
+                  if (loading || !data) return <h1>Loading...</h1>;
+                  return (
+                    <CartDropDown
+                      dropvalues={data.currencies}
+                      show={this.state.showCartDrop}
+                      setDrop={this.setCartDrop}
+                    />
+                  );
+                }}
+              </Query>
             </LinkContainer>
           </Partition>
         </Holder>

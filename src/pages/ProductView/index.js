@@ -3,10 +3,12 @@ import styled, { ThemeProvided } from "styled-components";
 import { connect } from "react-redux";
 import { Query } from "@apollo/client/react/components";
 import { LOAD_PRODUCT } from "../../GraphQL/Queries";
+import { addToCart } from "../../actions/cart";
 
 import Thumbnail from "../../components/Thumbnail";
 import item from "../../assets/item1.png";
 import Button from "../../components/Button";
+import { client } from "@tilework/opus";
 
 const Container = styled.div`
   background-color: ${(props) => (props.scrolled ? "white" : "transparent")};
@@ -134,19 +136,56 @@ class ProductView extends Component {
     super(props);
 
     this.state = {
-      hamm: false,
-      click: false,
-      scroll: true,
       currency: "usd",
-      selectedColor: "",
-      selectedCapacity: "",
-      selectedSize: ""
+      Color: "",
+      Capacity: "",
+      Size: "",
+      exists: false,
     };
   }
 
   componentDidMount() {
-    console.log(this.props.location.state.prices);
+    const exists = this.props.cart.some((item, index) => {
+      if (item.id == this.props.params.id) {
+        this.setState({ ...item, exists: true });
+        return true;
+      }
+
+      this.props.location.state.attributes.map((item, index) => {
+        console.log(item.name, item.items[0].value);
+
+        this.setState({ [item.name]: item.items[0].value });
+      });
+      return false;
+    });
+
+    if (this.props.cart.length == 0) {
+      this.props.location.state.attributes.map((item, index) => {
+        this.setState({ [item.name]: item.items[0].value });
+      });
+    }
+
+    console.log(exists);
   }
+
+  addToCart = () => {
+    let data = {
+      id: this.props.params.id,
+      Count: 1,
+      ...this.state,
+    };
+
+    console.log(this.state.exists);
+    if (!this.state.exists) {
+      this.setState({ exists: true });
+      this.props.addToCart(data);
+    }
+  };
+
+  setValue = (name, value) => {
+    console.log(name, value);
+    this.setState({ [name]: value });
+  };
 
   render() {
     var price = this.props.location.state.prices.filter((item) => {
@@ -168,66 +207,126 @@ class ProductView extends Component {
               if (loading) {
                 return <h1>Loading....</h1>;
               }
+              // console.log(data)
+
               return (
                 <Centralize>
                   <SidePix>
-                    <Prodimg src={data.product.gallery[3]} style={{ border: "solid", borderColor: "#c4c4c450", marginBottom: "5px", display: data.product.gallery[3] ? "block" : "none"}}/>
-                    <Prodimg src={data.product.gallery[1]} style={{ border: "solid", borderColor: "#c4c4c450", marginBottom: "5px", display: data.product.gallery[1] ? "block" : "none"}}/>
-                    <Prodimg src={data.product.gallery[2]} style={{ border: "solid", borderColor: "#c4c4c450", marginBottom: "5px", display: data.product.gallery[2] ? "block" : "none"}}/>
+                    <Prodimg
+                      src={data.product.gallery[3]}
+                      style={{
+                        border: "solid",
+                        borderColor: "#c4c4c450",
+                        marginBottom: "5px",
+                        display: data.product.gallery[3] ? "block" : "none",
+                      }}
+                    />
+                    <Prodimg
+                      src={data.product.gallery[1]}
+                      style={{
+                        border: "solid",
+                        borderColor: "#c4c4c450",
+                        marginBottom: "5px",
+                        display: data.product.gallery[1] ? "block" : "none",
+                      }}
+                    />
+                    <Prodimg
+                      src={data.product.gallery[2]}
+                      style={{
+                        border: "solid",
+                        borderColor: "#c4c4c450",
+                        marginBottom: "5px",
+                        display: data.product.gallery[2] ? "block" : "none",
+                      }}
+                    />
                   </SidePix>
 
                   <MainHolder>
                     <Prodimg
                       src={data.product.gallery[0]}
-                      style={{ width: "auto", height: "auto", marginLeft: "auto", marginRight: "auto" }}
+                      style={{
+                        width: "auto",
+                        height: "auto",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                      }}
                     />
                     <DetailsHolder>
                       <H1 style={{ fontWeight: "600", marginBottom: "10px" }}>
                         {data.product.name}
                       </H1>
-                      <H1>{this.props.location.state.brand}</H1>
+                      <H1>{data.product.brand}</H1>
 
-                      {this.props.location.state.attributes.map(
-                        (obj, index) => {
-                          console.log(item.value);
+                      {data.product.attributes.map((obj, index) => {
+                        if (obj.type == "text") {
+                          return (
+                            <div key={index}>
+                              <BoxTag>{obj.name}</BoxTag>
+                              <Hold>
+                                {obj.items.map((item, index) => {
+                                  return (
+                                    <Box
+                                      style={
+                                        item.value == this.state[obj.name]
+                                          ? {
+                                              background: "black",
+                                              color: "white",
+                                            }
+                                          : {}
+                                      }
+                                      onClick={() =>
+                                        this.setValue(obj.name, item.value)
+                                      }
+                                    >
+                                      {item.value}
+                                    </Box>
+                                  );
+                                })}
+                              </Hold>
+                            </div>
+                          );
+                        }
 
-                          if (obj.name == "Size" || obj.name == "Capacity") {
-                            return (
-                              <div>
-                                <BoxTag>{obj.name}</BoxTag>
-                                <Hold>
-                                  {obj.items.map((item, index) => {
-                                    return <Box>{item.value}</Box>;
-                                  })}
-                                </Hold>
-                              </div>
-                            );
-                          }
+                        if (obj.type == "swatch") {
+                          return (
+                            <div key={index}>
+                              <BoxTag>{obj.name}</BoxTag>
 
-                          if (obj.name == "Color") {
-                            return (
-                              <div>
-                                <BoxTag>{obj.name}</BoxTag>
-
-                                <Hold>
-                                  {obj.items.map((item, index) => {
-                                    return (
+                              <Hold>
+                                {obj.items.map((item, index) => {
+                                  return (
+                                    <div
+                                      style={{
+                                        marginRight: "3px",
+                                        padding: "1px",
+                                        border: "solid",
+                                        borderColor:
+                                          item.value == this.state.Color
+                                            ? "#5ECE7B"
+                                            : "transparent",
+                                      }}
+                                    >
                                       <Box
                                         style={{
                                           background: item.value,
                                           color: "white",
                                           width: "35px",
                                           height: "30px",
+                                          borderColor: "#c4c4c4",
+                                          margin: "0px",
                                         }}
+                                        onClick={() =>
+                                          this.setValue(obj.name, item.value)
+                                        }
                                       ></Box>
-                                    );
-                                  })}
-                                </Hold>
-                              </div>
-                            );
-                          }
+                                    </div>
+                                  );
+                                })}
+                              </Hold>
+                            </div>
+                          );
                         }
-                      )}
+                      })}
 
                       <BoxTag>Price</BoxTag>
 
@@ -244,8 +343,19 @@ class ProductView extends Component {
                         </BoxTag>
                       </Hold>
 
-                      <Hold>
-                        <Button>ADD TO CART</Button>
+                      <Hold style={{ flexDirection: "column" }}>
+                        {this.state.exists && (
+                          <p
+                            style={{
+                              color: "red",
+                              fontSize: "10px",
+                              margin: "0px",
+                            }}
+                          >
+                            Item already added to cart view in cart
+                          </p>
+                        )}{" "}
+                        <Button onClick={this.addToCart}>ADD TO CART</Button>
                       </Hold>
 
                       <Hold>
@@ -270,7 +380,8 @@ class ProductView extends Component {
 const mapStateToProps = (state) => {
   return {
     setup: state.setup,
+    cart: state.cart,
   };
 };
 
-export default connect(mapStateToProps)(ProductView);
+export default connect(mapStateToProps, { addToCart })(ProductView);

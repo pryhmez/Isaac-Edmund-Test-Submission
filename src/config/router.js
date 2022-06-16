@@ -13,7 +13,7 @@ class Router extends React.Component {
     return (
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<CartPage />} />
           <Route path="/product/:id" element={<WrappedProductView />} />
 
           {/* <Route path="/" element={<ProductView />} /> */}

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { Component } from "react";
 import styled, { ThemeProvided } from "styled-components";
-
-import item from "../assets/item1.png";
+import { connect } from "react-redux";
+import { addToCart } from "../actions/cart";
 
 const Container = styled.div`
   background-color: transparent;
@@ -18,8 +18,9 @@ const Container = styled.div`
 
 const ItemCont = styled.div`
   width: 100%;
-  height: 280px;
-//   background: red;
+  // height: auto;
+  max-height: 450px;
+  //   background: red;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -27,9 +28,9 @@ const ItemCont = styled.div`
 `;
 
 const Prodimg = styled.img`
-  height: 100%;
+  max-height: 200px;
   width: auto;
-//   background: green;
+  //   background: green;
 `;
 
 const DetailsHolder = styled.div`
@@ -37,9 +38,8 @@ const DetailsHolder = styled.div`
   flex-direction: column;
   width: 80%;
   height: 100%;
-   //  background: cyan;
-    justify-content: center;
-
+  //  background: cyan;
+  justify-content: center;
 `;
 
 const H1 = styled.h1`
@@ -63,7 +63,8 @@ const BoxTag = styled.p`
 
 const Box = styled.div`
   border: solid black 1px;
-  width: 40px;
+  min-width: 45px;
+  width: auto;
   height: 35px;
   background: white;
   text-align: center;
@@ -71,69 +72,143 @@ const Box = styled.div`
   align-items: center;
   justify-content: center;
   margin-right: 10px;
+  padding: 5px;
 `;
 
-function CartItem(props) {
-  return (
-    <Container {...props}>
-      <ItemCont>
-        <DetailsHolder>
-          <H1 style={{ fontWeight: "600" }}>Apollo</H1>
-          <H1 style={{ fontWeight: "400" }}>Running Short</H1>
+class CartItem extends Component {
+  constructor(props) {
+    super(props);
 
-          <Hold>
-            <BoxTag
-              style={{
-                fontFamily: "Raleway, sans-serif",
-                fontWeight: "700",
-                lineHeight: "18px",
-              }}
-            >
-              $50
-            </BoxTag>
-          </Hold>
+    this.state = {
+      currency: "usd",
+      Color: "",
+      Capacity: "",
+      Size: "",
+      exists: false,
+    };
+  }
 
-          <BoxTag>Size</BoxTag>
-          <Hold>
-            <Box>XS</Box>
-            <Box style={{ background: "black", color: "white" }}>S</Box>
-            <Box>M</Box>
-            <Box>L</Box>
-          </Hold>
+  // componentDidMount() {
+  //   console.log(this.props.cart[1].Color);
+  // }
 
-          <BoxTag>Color</BoxTag>
+  setValue = (name, value) => {
+    console.log(name, value);
+    this.setState({ [name]: value });
+  };
 
-          <Hold>
-            <Box
-              style={{
-                background: "red",
-                color: "white",
-                width: "30px",
-                height: "25px",
-              }}
-            ></Box>
-            <Box
-              style={{
-                background: "white",
-                color: "white",
-                width: "30px",
-                height: "25px",
-              }}
-            ></Box>
-            <Box
-              style={{
-                background: "cyan",
-                color: "white",
-                width: "30px",
-                height: "25px",
-              }}
-            ></Box>
-          </Hold>
-        </DetailsHolder>
-        <Prodimg src={item} />
-      </ItemCont>
-    </Container>
-  );
+  render() {
+
+    var price = this.props.details.product.prices.filter((item) => {
+      return item.currency.label == this.props.setup.currency;
+     });
+
+    return (
+      <Container>
+        <ItemCont>
+          <DetailsHolder>
+            <H1 style={{ fontWeight: "600" }}>
+              {this.props.details.product.name}
+            </H1>
+            <H1 style={{ fontWeight: "400" }}>
+              {this.props.details.product.brand}
+            </H1>
+
+            <Hold>
+              <BoxTag
+                style={{
+                  fontFamily: "Raleway, sans-serif",
+                  fontWeight: "700",
+                  lineHeight: "20px",
+                  marginTop: "10px"
+                }}
+              >
+                {price[0].currency.symbol}{price[0].amount}
+              </BoxTag>
+            </Hold>
+
+            {this.props.details.product.attributes.map((obj, index) => {
+              if (obj.type == "text") {
+                return (
+                  <div key={index}>
+                    <BoxTag>{obj.name}</BoxTag>
+                    <Hold>
+                      {obj.items.map((item, ind) => {
+                        return (
+                          <Box
+                            style={
+                              item.value == this.props.cart[this.props.index][obj.name]
+                                ? {
+                                    background: "black",
+                                    color: "white",
+                                    padding: "2px",
+                                  }
+                                : {}
+                            }
+                            onClick={() => this.setValue(obj.name, item.value)}
+                          >
+                            {item.value}
+                          </Box>
+                        );
+                      })}
+                    </Hold>
+                  </div>
+                );
+              }
+
+              if (obj.type == "swatch") {
+                return (
+                  <div key={index}>
+                    <BoxTag>{obj.name}</BoxTag>
+
+                    <Hold>
+                      {obj.items.map((item) => {
+                        return (
+                          <div
+                            style={{
+                              marginRight: "3px",
+                              // padding: "1px",
+                              border: "solid",
+                              borderColor:
+                                item.value == this.props.cart[this.props.index][obj.name]
+                                  ? "#5ECE7B"
+                                  : "transparent",
+                            }}
+                          >
+              
+                            <Box
+                              style={{
+                                background: item.value,
+                                color: "white",
+                                minWidth: "35px",
+                                height: "30px",
+                                borderColor: "#c4c4c4",
+                                margin: "1px",
+                              }}
+                              // onClick={() =>
+                              //   this.setValue(obj.name, item.value)
+                              // }
+                            ></Box>
+                          </div>
+                        );
+                      })}
+                    </Hold>
+                  </div>
+                );
+              }
+            })}
+          </DetailsHolder>
+          <Prodimg src={this.props.details.product.gallery[0]} />
+        </ItemCont>
+      </Container>
+    );
+  }
 }
+const mapStateToProps = (state) => {
+  return {
+    setup: state.setup,
+    cart: state.cart,
+  };
+};
 
-export default CartItem;
+export default connect(mapStateToProps, { addToCart })(CartItem);

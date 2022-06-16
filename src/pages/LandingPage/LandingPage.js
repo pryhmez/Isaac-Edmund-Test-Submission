@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import "../../css/landing.css";
 
 import Header from "../../components/Header";
-import Women from "../Women";
+import Main from "../Main";
 
 import { render } from "@testing-library/react";
 
@@ -73,7 +73,7 @@ class LandingPage extends Component {
 
 
         <SectionHolder>
-          <Women/>
+          <Main/>
 
         </SectionHolder>
       

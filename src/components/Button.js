@@ -3,7 +3,7 @@ import styled, { ThemeProvided } from "styled-components";
 
 const Btn = styled.button`
   cursor: pointer;
-  background: #5ECE7B;
+  background: #5ece7b;
   width: 100%;
   height: 50px;
   border: solid transparent;
@@ -15,7 +15,7 @@ const Btn = styled.button`
   font-size: 14px;
 
   &:hover {
-    background: #5ECE7B;
+    background: #5ece7b;
   }
 `;
 
