@@ -2,10 +2,8 @@ import { Component } from "react";
 import styled, { ThemeProvided } from "styled-components";
 import { connect } from "react-redux";
 import { addToCart} from "../actions/cart";
-// import { Link, animateScroll as scroll } from "react-scroll";
 import { Navigate } from "react-router-dom";
 
-import item from "../assets/item1.png";
 import { CartWhite } from "../components/AllSvgs";
 
 

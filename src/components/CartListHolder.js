@@ -2,10 +2,11 @@ import { Component } from "react";
 import styled, { ThemeProvided } from "styled-components";
 import { connect } from "react-redux";
 import { Query } from "@apollo/client/react/components";
-// import { Query as OpusQuery, Field, InlineFragment, client } from '@tilework/opus';
+import { Navigate } from "react-router-dom";
 import { LOAD_PRODUCT } from "../GraphQL/Queries";
 
 import CartItem from "./CartItem";
+import MiniCartItem from "./MiniCartItem";
 import Button from "./Button";
 
 const Centralize = styled.div`
@@ -16,6 +17,34 @@ const Centralize = styled.div`
   width: 100%;
   //   height: 70vh;
   //  background: blue;
+`;
+
+const Holder = styled.div`
+  &::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px #fff;
+    border-radius: 10px;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #fff;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #fff;
+  }
+  ${(props) =>
+    props.dropdown && {
+      "max-height": "45vh",
+      overflow: "scroll",
+    }}
 `;
 
 const Demarkator = styled.div`
@@ -59,6 +88,7 @@ class CartListHolder extends Component {
       prices: [],
       total: "",
       itemCosts: [],
+      goTo: "",
     };
   }
 
@@ -79,79 +109,147 @@ class CartListHolder extends Component {
     });
   };
 
+  getQuantity = () => {
+    return this.props.cart.reduce((acc, next) => {
+      return acc + next.Count;
+    }, 0);
+  };
 
   totalCost = () => {
-
-
     const sum = this.state.itemCosts.reduce((accumulator, next) => {
       return accumulator + next;
     }, 0);
 
-    return (
-      <Summary>
-        <span style={{ display: "flex", justifyContent: "flex-start" }}>
-          {" "}
-          <Name>Tax 21%: </Name>
-          <Price>
-            {this.props.setup.symbol}
-            {Math.round(0.21 * sum)}
-          </Price>
-        </span>
-        <span style={{ display: "flex" }}>
-          {" "}
-          <Name>Quantity: </Name>
-          <Price>{3}</Price>
-        </span>
-        <span style={{ display: "flex" }}>
-          {" "}
-          <Name>Total: </Name>
-          <Price>
-            {this.props.setup.symbol}
-            {Math.round(sum)}
-          </Price>
-        </span>
-        <Button>Order</Button>
-      </Summary>
-    );
+    if (this.props.dropdown) {
+      return (
+        <Summary>
+          <span style={{ display: "flex", justifyContent: "space-between" }}>
+            {" "}
+            <Name style={{ fontSize: "12px", fontWeight: "700" }}>Total: </Name>
+            <Price style={{ fontSize: "12px", fontWeight: "700" }}>
+              {this.props.setup.symbol}
+              {Math.round(sum)}
+            </Price>
+          </span>
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Button
+              style={{
+                width: "40%",
+                height: "33px",
+                background: "transparent",
+                borderColor: "black",
+                color: "black",
+                borderRadius: "3px",
+                margin: "0px",
+              }}
+              onClick={() => this.setState({ goTo: "cart" })}
+            >
+              VIEW BAG
+            </Button>
+            <Button
+              style={{
+                width: "40%",
+                height: "33px",
+                borderRadius: "3px",
+                margin: "0px",
+              }}
+              onClick={() => this.setState({ goTo: "cart" })}
+            >
+              CHECKOUT
+            </Button>
+          </div>
+        </Summary>
+      );
+    } else {
+      return (
+        <Summary>
+          <span style={{ display: "flex", justifyContent: "flex-start" }}>
+            {" "}
+            <Name>Tax 21%: </Name>
+            <Price>
+              {this.props.setup.symbol}
+              {Math.round(0.21 * sum)}
+            </Price>
+          </span>
+          <span style={{ display: "flex" }}>
+            {" "}
+            <Name>Quantity: </Name>
+            <Price>{3}</Price>
+          </span>
+          <span style={{ display: "flex" }}>
+            {" "}
+            <Name>Total: </Name>
+            <Price>
+              {this.props.setup.symbol}
+              {Math.round(sum)}
+            </Price>
+          </span>
+          <Button>Order</Button>
+        </Summary>
+      );
+    }
   };
 
   render() {
     return (
       <Centralize>
-        {this.props.cart.map((item, index) => {
-          return (
-            <Query
-              query={LOAD_PRODUCT(item.id)}
-              key={index}
-              // onCompleted={(data) =>
-              //   this.returnPrices(index, data.product.prices)
-              // }
-              //   fetchPolicy={"network-only"}
-            >
-              {({ loading, error, data }) => {
-                if (error) {
-                  return <h1>Error...{error + ""}</h1>;
-                }
-                if (loading) {
-                  return <h1>Loading....</h1>;
-                }
-                // this.returnPrices(index, data.product.prices)
-                return (
-                  <div>
-                    <Demarkator></Demarkator>
-                    <CartItem
-                      details={data}
-                      item={item}
-                      index={index}
-                      getCosts={this.getCosts}
-                    ></CartItem>
-                    <Demarkator></Demarkator>
-                  </div>
-                );
-              }}
-            </Query>
-          );
-        })}
+        <Name style={{ fontSize: "12px", fontWeight: "700" }}>
+          My Bag: {this.getQuantity()}
+        </Name>
+        {this.state.goTo && <Navigate to={`/cart`} />}
+
+        <Holder dropdown={this.props.dropdown}>
+          {this.props.cart.map((item, index) => {
+            return (
+              <Query
+                query={LOAD_PRODUCT(item.id)}
+                key={index}
+                // onCompleted={(data) =>
+                //   this.returnPrices(index, data.product.prices)
+                // }
+                //   fetchPolicy={"network-only"}
+              >
+                {({ loading, error, data }) => {
+                  if (error) {
+                    return <h1>Error...{error + ""}</h1>;
+                  }
+                  if (loading) {
+                    return <h1>Loading....</h1>;
+                  }
+                  // this.returnPrices(index, data.product.prices)
+                  return (
+                    <div>
+                      <Demarkator></Demarkator>
+                      {this.props.dropdown ? (
+                        <MiniCartItem
+                          details={data}
+                          item={item}
+                          index={index}
+                          getCosts={this.getCosts}
+                        />
+                      ) : (
+                        <CartItem
+                          details={data}
+                          item={item}
+                          index={index}
+                          getCosts={this.getCosts}
+                        />
+                      )}
+
+                      <Demarkator></Demarkator>
+                    </div>
+                  );
+                }}
+              </Query>
+            );
+          })}
+        </Holder>
 
         {this.totalCost()}
       </Centralize>

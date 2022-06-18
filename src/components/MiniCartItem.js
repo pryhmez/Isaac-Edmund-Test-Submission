@@ -6,7 +6,7 @@ import { editItemProp, removeFromCart } from "../actions/cart";
 const Container = styled.div`
   background-color: transparent;
   width: 100%;
-  //   height: 100vh;
+//  max-height: 40vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,25 +29,25 @@ const ItemCont = styled.div`
 `;
 
 const Prodimg = styled.img`
-  max-height: 200px;
-  width: auto;
+  height: auto;
+  width: 80%;
   //   background: green;
 `;
 
 const DetailsHolder = styled.div`
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 50%;
   height: 100%;
-  //  background: cyan;
+   // background: cyan;
   justify-content: center;
 `;
 
 const H1 = styled.h1`
   font-family: "Raleway", sans-serif;
   font-weight: 300;
-  font-size: 30px;
-  line-height: 27px;
+  font-size: 12px;
+  line-height: 10px;
   margin: 0px;
   width: 100%;
 
@@ -55,31 +55,33 @@ const H1 = styled.h1`
 `;
 
 const Hold = styled.div`
-  padding: 2px 10px 10px 0px;
+  padding: 2px 2px 2px 0px;
   margin: 0px 10px 0px 0px;
   display: flex;
 `;
 
 const BoxTag = styled.p`
   margin: 0px 0px 0px 0px;
+  font-size: 9px;
 `;
 
 const Box = styled.div`
   border: solid black 1px;
-  min-width: 45px;
-  width: auto;
-  height: 35px;
+  max-width: 24px;
+  width: 2%;
+  height: 20px;
   background: white;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 10px;
+  margin-right: 1px;
   padding: 5px;
+  font-size: 8px;
 `;
 
 const RightDiv = styled.div`
-width: 30%;
+width: 50%;
 display: flex;
 justify-content: space-between;
 // background: red;
@@ -87,14 +89,14 @@ justify-content: space-between;
 
 const CountHolder = styled.div`
   // background: blue;
-  height: 200px;
+//   height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
 `;
 
-class CartItem extends Component {
+class MiniCartItem extends Component {
   constructor(props) {
     super(props);
 
@@ -162,14 +164,14 @@ class CartItem extends Component {
             <H1 style={{ fontWeight: "400" }}>
               {this.props.details.product.brand}
             </H1>
-
+ 
             <Hold>
               <BoxTag
                 style={{
                   fontFamily: "Raleway, sans-serif",
-                  fontWeight: "700",
-                  lineHeight: "20px",
-                  marginTop: "10px",
+                  fontWeight: "400",
+                  lineHeight: "10px",
+                  marginTop: "1px",
                 }}
               >
                 {price[0].currency.symbol}
@@ -192,7 +194,7 @@ class CartItem extends Component {
                                 ? {
                                     background: "black",
                                     color: "white",
-                                    padding: "2px",
+                                    padding: "1px",
                                   }
                                 : {}
                             }
@@ -217,7 +219,7 @@ class CartItem extends Component {
                         return (
                           <div
                             style={{
-                              marginRight: "3px",
+                              marginRight: "0px",
                               // padding: "1px",
                               border: "solid",
                               borderColor:
@@ -231,10 +233,10 @@ class CartItem extends Component {
                               style={{
                                 background: item.value,
                                 color: "white",
-                                minWidth: "35px",
-                                height: "30px",
+                                minWidth: "2%",
+                                height: "20px",
                                 borderColor: "#c4c4c4",
-                                margin: "1px",
+                                margin: "0.2px",
                               }}
                               onClick={() => this.changeSpec(obj.name, item.value)}
 
@@ -271,5 +273,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, { editItemProp, removeFromCart })(
-  CartItem
+  MiniCartItem
 );

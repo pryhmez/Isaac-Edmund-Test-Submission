@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useDispatch, connect } from "react-redux";
+// import { useDispatch, connect } from "react-redux";
 import WithRouter from "./withRouter";
 
 import LandingPage from "../pages/LandingPage/LandingPage";
@@ -13,11 +13,8 @@ class Router extends React.Component {
     return (
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<CartPage />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/product/:id" element={<WrappedProductView />} />
-
-          {/* <Route path="/" element={<ProductView />} /> */}
-
           <Route path="/cart" element={<CartPage />} />
         </Routes>
       </BrowserRouter>
@@ -25,11 +22,4 @@ class Router extends React.Component {
   }
 }
 
-// const mapStateToProps = (state) => {
-//    return {
-//      user: state.user
-//    };
-//  };
-
-// export default connect(mapStateToProps)(Router);
 export default Router;

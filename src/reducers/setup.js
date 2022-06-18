@@ -1,7 +1,7 @@
 const initialState = {
   currency: "USD",
   symbol: "$",
-  page: "all",
+  page: "All",
 };
 
 export default function user(state = initialState, action) {

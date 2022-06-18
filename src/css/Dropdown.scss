@@ -8,6 +8,28 @@
     text-align: start;
     box-shadow: 3px 3px 10px #c4c4c472;
     padding: 0px;
+    // overflow: scroll;
+
+    &::-webkit-scrollbar {
+        width: 0 !important;
+        height: 0 !important;
+      }
+    
+      /* Track */
+      &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px #fff;
+        border-radius: 10px;
+      }
+    
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        background: #fff;
+        border-radius: 10px;
+      }
+    
+      &::-webkit-scrollbar-thumb:hover {
+        background: #fff;
+      }
 
 }
 

@@ -27,9 +27,9 @@ class CartDropdown extends Component {
           className={
             !this.props.show ? "dropdown-menu clicked" : "dropdown-menu"
           }
-          style={{ width: "16vw", marginRight: "5vw" }}
+          style={{ width: "20vw", padding: "20px", marginRight: "7vw", background: "white" }}
         >
-          <CartListHolder />
+          <CartListHolder dropdown={true}/>
         </div>
       </>
     );
