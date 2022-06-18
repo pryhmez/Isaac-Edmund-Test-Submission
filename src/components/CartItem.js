@@ -1,7 +1,7 @@
 import { Component } from "react";
 import styled, { ThemeProvided } from "styled-components";
 import { connect } from "react-redux";
-import { addToCart } from "../actions/cart";
+import { editItemProp, removeFromCart } from "../actions/cart";
 
 const Container = styled.div`
   background-color: transparent;
@@ -11,6 +11,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  // background: green;
   @media (max-width: 768px) {
     margin-top: 20px;
   }
@@ -18,8 +19,8 @@ const Container = styled.div`
 
 const ItemCont = styled.div`
   width: 100%;
-  // height: auto;
-  max-height: 450px;
+  // height: 300px;
+  max-height: 350px;
   //   background: red;
   display: flex;
   flex-direction: row;
@@ -75,6 +76,22 @@ const Box = styled.div`
   padding: 5px;
 `;
 
+const RightDiv = styled.div`
+width: 30%;
+display: flex;
+justify-content: space-between;
+// background: red;
+`
+
+const CountHolder = styled.div`
+  // background: blue;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 class CartItem extends Component {
   constructor(props) {
     super(props);
@@ -97,11 +114,41 @@ class CartItem extends Component {
     this.setState({ [name]: value });
   };
 
-  render() {
+  changeCount = (type) => {
+    if (type === "add") {
+      this.props.editItemProp(
+        this.props.details.product.id,
+        "Count",
+        this.props.cart[this.props.index].Count + 1
+      );
+    }
+    if (type === "minus") {
+      if (this.props.cart[this.props.index].Count == 1) {
+        this.props.removeFromCart(this.props.details.product.id);
+      } else {
+        this.props.editItemProp(
+          this.props.details.product.id,
+          "Count",
+          this.props.cart[this.props.index].Count - 1
+        );
+      }
+    }
+  };
 
+  changeSpec = (spec, param) => {
+    this.props.editItemProp(
+      this.props.details.product.id,
+      spec,
+      param
+    );
+  }
+
+  render() {
     var price = this.props.details.product.prices.filter((item) => {
       return item.currency.label == this.props.setup.currency;
-     });
+    });
+
+    this.props.getCosts(this.props.index, parseInt(price[0].amount) * this.props.cart[this.props.index].Count);
 
     return (
       <Container>
@@ -120,10 +167,11 @@ class CartItem extends Component {
                   fontFamily: "Raleway, sans-serif",
                   fontWeight: "700",
                   lineHeight: "20px",
-                  marginTop: "10px"
+                  marginTop: "10px",
                 }}
               >
-                {price[0].currency.symbol}{price[0].amount}
+                {price[0].currency.symbol}
+                {price[0].amount}
               </BoxTag>
             </Hold>
 
@@ -137,7 +185,8 @@ class CartItem extends Component {
                         return (
                           <Box
                             style={
-                              item.value == this.props.cart[this.props.index][obj.name]
+                              item.value ==
+                              this.props.cart[this.props.index][obj.name]
                                 ? {
                                     background: "black",
                                     color: "white",
@@ -145,7 +194,7 @@ class CartItem extends Component {
                                   }
                                 : {}
                             }
-                            onClick={() => this.setValue(obj.name, item.value)}
+                            onClick={() => this.changeSpec(obj.name, item.value)}
                           >
                             {item.value}
                           </Box>
@@ -170,12 +219,12 @@ class CartItem extends Component {
                               // padding: "1px",
                               border: "solid",
                               borderColor:
-                                item.value == this.props.cart[this.props.index][obj.name]
+                                item.value ==
+                                this.props.cart[this.props.index][obj.name]
                                   ? "#5ECE7B"
                                   : "transparent",
                             }}
                           >
-              
                             <Box
                               style={{
                                 background: item.value,
@@ -185,9 +234,8 @@ class CartItem extends Component {
                                 borderColor: "#c4c4c4",
                                 margin: "1px",
                               }}
-                              // onClick={() =>
-                              //   this.setValue(obj.name, item.value)
-                              // }
+                              onClick={() => this.changeSpec(obj.name, item.value)}
+
                             ></Box>
                           </div>
                         );
@@ -198,7 +246,16 @@ class CartItem extends Component {
               }
             })}
           </DetailsHolder>
+          <RightDiv>
+
+          <CountHolder>
+            <Box onClick={() => this.changeCount("add")}>+</Box>
+
+            <BoxTag>{this.props.cart[this.props.index].Count}</BoxTag>
+            <Box onClick={() => this.changeCount("minus")}>-</Box>
+          </CountHolder>
           <Prodimg src={this.props.details.product.gallery[0]} />
+          </RightDiv>
         </ItemCont>
       </Container>
     );
@@ -211,4 +268,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { addToCart })(CartItem);
+export default connect(mapStateToProps, { editItemProp, removeFromCart })(
+  CartItem
+);

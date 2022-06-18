@@ -94,14 +94,6 @@ class Cart extends Component {
         <Holder>
           <Heading>Cart</Heading>
 
-          {/* <Centralize>
-             <Demarkator></Demarkator>
-            <CartItem></CartItem>
-            <Demarkator></Demarkator>
-            
-
-          </Centralize> */}
-
           <CartListHolder/>
         </Holder>
       </Container>

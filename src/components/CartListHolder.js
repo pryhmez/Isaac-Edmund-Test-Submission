@@ -58,26 +58,62 @@ class CartListHolder extends Component {
       currency: "usd",
       prices: [],
       total: "",
+      itemCosts: [],
     };
   }
 
   componentDidUpdate() {
-     console.log("updated")
+    console.log("updated");
+    if (this.state.prices.length !== 0) {
+      this.totalCost();
+    }
   }
 
-  returnPrices = async (index, nextPrice) => {
-    var price = nextPrice.filter((item) => {
-      return item.currency.label == this.props.setup.currency;
-    });
+  getCosts = (index, cost) => {
+    // console.log(index, cost)
+    let { itemCosts } = this.state;
 
-    let { prices } = this.state;
-    prices.push(price[0].amount);
+    itemCosts[index] = cost;
     this.setState({
-      total: this.state.prices.reduce((a, b) => parseInt(a) + parseInt(b), 0),
+      total: 0,
     });
   };
 
 
+  totalCost = () => {
+
+
+    const sum = this.state.itemCosts.reduce((accumulator, next) => {
+      return accumulator + next;
+    }, 0);
+
+    return (
+      <Summary>
+        <span style={{ display: "flex", justifyContent: "flex-start" }}>
+          {" "}
+          <Name>Tax 21%: </Name>
+          <Price>
+            {this.props.setup.symbol}
+            {Math.round(0.21 * sum)}
+          </Price>
+        </span>
+        <span style={{ display: "flex" }}>
+          {" "}
+          <Name>Quantity: </Name>
+          <Price>{3}</Price>
+        </span>
+        <span style={{ display: "flex" }}>
+          {" "}
+          <Name>Total: </Name>
+          <Price>
+            {this.props.setup.symbol}
+            {Math.round(sum)}
+          </Price>
+        </span>
+        <Button>Order</Button>
+      </Summary>
+    );
+  };
 
   render() {
     return (
@@ -87,9 +123,9 @@ class CartListHolder extends Component {
             <Query
               query={LOAD_PRODUCT(item.id)}
               key={index}
-              onCompleted={(data) =>
-                this.returnPrices(index, data.product.prices)
-              }
+              // onCompleted={(data) =>
+              //   this.returnPrices(index, data.product.prices)
+              // }
               //   fetchPolicy={"network-only"}
             >
               {({ loading, error, data }) => {
@@ -99,7 +135,7 @@ class CartListHolder extends Component {
                 if (loading) {
                   return <h1>Loading....</h1>;
                 }
-
+                // this.returnPrices(index, data.product.prices)
                 return (
                   <div>
                     <Demarkator></Demarkator>
@@ -107,6 +143,7 @@ class CartListHolder extends Component {
                       details={data}
                       item={item}
                       index={index}
+                      getCosts={this.getCosts}
                     ></CartItem>
                     <Demarkator></Demarkator>
                   </div>
@@ -116,25 +153,7 @@ class CartListHolder extends Component {
           );
         })}
 
-        <Summary>
-          <span style={{ display: "flex", justifyContent: "flex-start" }}>
-            {" "}
-            <Name>Tax 21%: </Name>
-            <Price >{this.props.setup.symbol}{0.21 * this.state.total}</Price>
-          </span>
-          <span style={{ display: "flex" }}>
-            {" "}
-            <Name>Quantity: </Name>
-            <Price>{3}</Price>
-          </span>
-          <span style={{ display: "flex" }}>
-            {" "}
-            <Name>Total: </Name>
-            <Price>{this.props.setup.symbol}{this.state.total}</Price>
-          </span>
-          <Button >Order</Button>
-
-        </Summary>
+        {this.totalCost()}
       </Centralize>
     );
   }

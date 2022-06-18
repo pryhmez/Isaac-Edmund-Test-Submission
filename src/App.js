@@ -33,10 +33,10 @@ const client = new ApolloClient({
   queryDeduplication: false,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: "no-cache",
     },
     query: {
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
   },

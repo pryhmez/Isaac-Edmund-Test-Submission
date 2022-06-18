@@ -2,7 +2,7 @@
     width: 80px;
     position: absolute;
     height: auto;
-    top: 3rem;
+    top: 4.5rem;
     z-index: 2;
     list-style: none;
     text-align: start;
@@ -11,7 +11,7 @@
 
 }
 
-.dropdown-menu li {
+.dropdown-menu li, .dropdown-menu div{
     // background: #00b749b4;
     // background-color: #fff3ed;
     cursor: pointer;
@@ -22,7 +22,7 @@
     }
 }
 
-.dropdown-menu li:hover {
+.dropdown-menu li:hover, .dropdown-menu div:hover {
     background: #EEEEEE;
 }
 

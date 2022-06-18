@@ -22,15 +22,15 @@ class CartDropdown extends Component {
     return (
       <>
         {/* {console.log(props)} */}
-        <ul
+        <div
           onClick={this.handleClick}
           className={
             !this.props.show ? "dropdown-menu clicked" : "dropdown-menu"
           }
-          // style={{ ...props.styles }}
+          style={{ width: "16vw", marginRight: "5vw" }}
         >
           <CartListHolder />
-        </ul>
+        </div>
       </>
     );
   }
